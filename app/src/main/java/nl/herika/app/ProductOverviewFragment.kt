@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import nl.herika.app.databinding.FragmentProductOverviewBinding
 import nl.herika.app.model.Product
@@ -18,6 +20,8 @@ import nl.herika.app.repository.ProductRepository
 
 class ProductOverviewFragment : Fragment() {
 
+    private lateinit var productRepository: ProductRepository
+    private val mainScope = CoroutineScope(Dispatchers.Main)
     private val products = arrayListOf<Product>()
     private lateinit var binding: FragmentProductOverviewBinding
     private val productAdapter =
@@ -29,9 +33,23 @@ class ProductOverviewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        productRepository = ProductRepository(requireContext())
+        getShoppingListFromDatabase()
+
         binding = FragmentProductOverviewBinding.inflate(inflater, container, false)
         return binding.root
 
+    }
+
+    private fun getShoppingListFromDatabase() {
+        mainScope.launch {
+            val products = withContext(Dispatchers.IO) {
+                productRepository.getAllProducts()
+            }
+            this@ProductOverviewFragment.products.clear()
+            this@ProductOverviewFragment.products.addAll(products)
+            this@ProductOverviewFragment.productAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -72,7 +90,7 @@ class ProductOverviewFragment : Fragment() {
 
         binding.rvProducts.apply {
             setHasFixedSize(true)
-            layoutManager =  LinearLayoutManager(activity)
+            layoutManager = LinearLayoutManager(activity)
             adapter = productAdapter
         }
     }
