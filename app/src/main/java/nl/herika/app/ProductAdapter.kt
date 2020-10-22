@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import nl.herika.app.databinding.FragmentProductBinding
+import nl.herika.app.databinding.ItemProductBinding
 import nl.herika.app.model.Product
 
 class ProductAdapter (private val products: List<Product>) :
@@ -12,7 +12,7 @@ class ProductAdapter (private val products: List<Product>) :
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val binding = FragmentProductBinding.bind(itemView)
+        private val binding = ItemProductBinding.bind(itemView)
 
         fun dataBind(product: Product) {
             binding.tvProductName.text = product.name
@@ -24,7 +24,7 @@ class ProductAdapter (private val products: List<Product>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context).inflate(
-                R.layout.fragment_product,
+                R.layout.item_product,
                 parent,
                 false
             )

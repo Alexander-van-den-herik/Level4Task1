@@ -34,11 +34,11 @@
         app:layout_constraintStart_toEndOf="@+id/fab_add_item"
         app:srcCompat="@android:drawable/ic_menu_delete" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_products"
-        android:layout_width="409dp"
-        android:layout_height="649dp"
-        android:layout_marginBottom="1dp"
+    <include
+        layout="@layout/content_main"
+        android:layout_width="match_parent"
+        android:layout_height="625dp"
+        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toTopOf="@+id/fab_remove"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
