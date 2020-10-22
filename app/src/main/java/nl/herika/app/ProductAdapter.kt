@@ -15,7 +15,7 @@ class ProductAdapter (private val products: List<Product>) :
         private val binding = FragmentProductBinding.bind(itemView)
 
         fun dataBind(product: Product) {
-            binding.tvProductName.text = product.productName
+            binding.tvProductName.text = product.name
             binding.tvQuantity.text = product.quantity.toString() + " X"
         }
     }
