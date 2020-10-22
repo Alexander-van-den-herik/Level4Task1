@@ -1,10 +1,13 @@
 package nl.herika.app
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -70,11 +73,54 @@ class ProductOverviewFragment : Fragment() {
     }
 
     private fun showAddProductDialog() {
-        TODO("Not yet implemented")
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(getString(R.string.title))
+        val dialogLayout = layoutInflater.inflate(R.layout.fragment_add_product, null)
+        val productName = dialogLayout.findViewById<EditText>(R.id.et_product_name)
+        val amount = dialogLayout.findViewById<EditText>(R.id.et_amount)
+
+        builder.setView(dialogLayout)
+        builder.setPositiveButton(R.string.btn_add) { _: DialogInterface, _: Int ->
+            addProduct(productName, amount)
+        }
+        builder.show()
+    }
+
+    private fun addProduct(name: EditText, amount: EditText) {
+        if (validateFields(name, amount)) {
+            mainScope.launch {
+                val product = Product(
+                    name = name.text.toString(),
+                    quantity = amount.text.toString().toLong()
+                )
+
+                withContext(Dispatchers.IO) {
+                    productRepository.insertProduct(product)
+                }
+
+                getShoppingListFromDatabase()
+            }
+        }
+    }
+
+    private fun validateFields(txtProductName: EditText, txtAmount: EditText): Boolean {
+        return if (txtProductName.text.toString().isNotBlank()
+            && txtAmount.text.toString().isNotBlank()
+        ) {
+            true
+        } else {
+            Toast.makeText(activity, "Please fill in the fields", Toast.LENGTH_LONG).show()
+            false
+        }
     }
 
     private fun removeAllProducts() {
-        TODO("Not yet implemented")
+        mainScope.launch {
+            withContext(Dispatchers.IO) {
+                productRepository.deleteAllProducts()
+            }
+            getShoppingListFromDatabase()
+        }
     }
 
 
@@ -109,6 +155,12 @@ class ProductOverviewFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
 
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        productRepository.deleteProduct(products[position])
+                    }
+                    getShoppingListFromDatabase()
+                }
             }
         }
         return ItemTouchHelper(callback)

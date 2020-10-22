@@ -2,11 +2,24 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph.xml"
-    app:startDestination="@id/productOverviewFragment">
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/FirstFragment">
+
     <fragment
-        android:id="@+id/productOverviewFragment"
+        android:id="@+id/FirstFragment"
         android:name="nl.herika.app.ProductOverviewFragment"
-        android:label="fragment_product_overview"
-        tools:layout="@layout/fragment_product_overview" />
+        tools:layout="@layout/fragment_product_overview">
+
+        <action
+            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/SecondFragment"
+        tools:layout="@layout/fragment_add_product">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
 </navigation>
